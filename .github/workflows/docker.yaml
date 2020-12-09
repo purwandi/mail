@@ -27,5 +27,6 @@ jobs:
         registry: docker.pkg.github.com
     - uses: docker/build-push-action@v2
       with:
+        context: .
         push: true
         tags: purwandi/mail:latest
