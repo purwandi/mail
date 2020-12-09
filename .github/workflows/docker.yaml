@@ -16,8 +16,7 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
         registry: docker.pkg.github.com
-        repository: purwandi/mail
     - uses: docker/build-push-action@v2
       with:
         push: true
-        tags: latest
+        tags: purwandi/mail:latest
