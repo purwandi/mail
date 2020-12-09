@@ -28,5 +28,5 @@ jobs:
       with:
         context: .
         load: true
-        tags: docker.pkg.github.com/purwandi/mailbox/mailbox:latest
-    - run: docker push docker.pkg.github.com/purwandi/mailbox/mailbox
+        tags: docker.pkg.github.com/purwandi/mail/mailbox:latest
+    - run: docker push docker.pkg.github.com/purwandi/mail/mailbox
