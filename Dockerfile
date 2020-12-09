@@ -1,7 +1,7 @@
 FROM node:alpine as node-builder
 WORKDIR /workspace
 ADD . /workspace
-RUN npm run build:prod
+RUN npm install && npm run build:prod
 
 FROM golang:alpine as go-builder
 WORKDIR /workspace
