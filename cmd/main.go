@@ -26,10 +26,14 @@ var (
 )
 
 func main() {
-	var shutdown = make(chan struct{})
-
 	runtime.GOMAXPROCS(runtime.NumCPU())
 	godotenv.Load()
+
+	run()
+}
+
+func run() {
+	var shutdown = make(chan struct{})
 
 	db := repository.NewMessageInMemory(repository.NewMessageInMemoryStore())
 	auth := &mail.Auth{

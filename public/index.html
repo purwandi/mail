@@ -11,17 +11,29 @@
 
   <div id="app">
     <div class="h-screen flex">
-      <div class="w-64 bg-gray-100 border-r">
-
-      </div>
-      <div class="flex-1 mix-w-0 bg-white">
-        <div class="panel-heading p-5">
-          <h1 class="text-xl">Hello from tidy</h1>
-          <p>From: Foobar < foo@bar.com > </p>
-          <p>To: Bar < foo@bar.com> </p>
+      <div class="w-80 border-r h-screen flex">
+        <div class="flex-1 overflow-y-auto border-t border-gray-100">
+          <a href=""
+            v-for="m in messages"
+            class="px-5 py-3 border-b border-gray-50 block"
+            v-bind:class="{ 'bg-gray-50': m.id == message.id }"
+            @click="setMessage($event, m)">
+            <h2 class="truncate font-medium">{{ m.sender }}</h2>
+            <h3 class="truncate">{{ m.subject }}</h3>
+            <p class="text-gray-400 text-xs truncate-2-lines">
+              {{ m.text_body }}
+            </p>
+          </a>
         </div>
-        <div class="panel-body">
-
+      </div>
+      <div class="flex-1 mix-w-0 h-screen flex flex-col bg-white">
+        <div class="p-5">
+          <h1 class="text-lg">{{ message.subject }}</h1>
+          <p class="text-xs">From : purwandi</p>
+          <p class="text-xs">To : purwandi@yahoo.com</p>
+        </div>
+        <div class="flex-1 overflow-y-auto border-t border-gray-100">
+          <iframe class="w-full h-full" :srcdoc="message.html_body"></iframe>
         </div>
       </div>
     </div>
@@ -30,7 +42,27 @@
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   <script>
     new Vue({
-      el: "#app"
+      el: "#app",
+      data () {
+        return {
+          messages: [],
+          message: {},
+        }
+      },
+      mounted() {
+        fetch('/api/message')
+          .then(res => res.json())
+          .then(res => {
+            this.message = res[0]
+            this.messages = res
+          })
+      },
+      methods: {
+        setMessage(e, m) {
+          this.message = m
+          e.preventDefault()
+        }
+      }
     })
   </script>
 </body>

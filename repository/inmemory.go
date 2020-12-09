@@ -3,58 +3,10 @@ package repository
 import (
 	"context"
 	"errors"
+	"sort"
 
 	"github.com/purwandi/mail/domain"
-	"github.com/segmentio/ksuid"
 )
-
-// MessageInMemoryStore ...
-type MessageInMemoryStore struct {
-	mapMessage map[string]domain.Message
-}
-
-// NewMessageInMemoryStore ...
-func NewMessageInMemoryStore() *MessageInMemoryStore {
-	m1 := ksuid.New().String()
-	m2 := ksuid.New().String()
-
-	return &MessageInMemoryStore{
-		mapMessage: map[string]domain.Message{
-			m1: {
-				ID:      m1,
-				Subject: "7 Quotes by Albert Einstein That Will Change How You Think | Sinem Günel in Age of Awareness",
-				From: []domain.Contact{
-					{Email: "noreply@medium.com", Name: "Medium"},
-				},
-				To: []domain.Contact{
-					{Email: "foo@bar.com", Name: "Fooabar"},
-				},
-				TextBody: "hello world",
-				HTMLBody: "<p>hello world</p>",
-				Attachments: []domain.Attachment{
-					{ID: "1lNigjr8fsntbweehfBLpkQRoMh.txt", Filename: "attachment.txt"},
-					{ID: "1lNip3BucJnkDGo2uAChhgib20T.png", Filename: "attachment.png"},
-				},
-			},
-			m2: {
-				ID:      m1,
-				Subject: "Change How You Think | Sinem Günel in Age of Awareness",
-				From: []domain.Contact{
-					{Email: "noreply@google.com", Name: "google"},
-				},
-				To: []domain.Contact{
-					{Email: "bar@bar.com", Name: "Foobar"},
-				},
-				TextBody: "hello world",
-				HTMLBody: "<p>hello world</p>",
-				Attachments: []domain.Attachment{
-					{ID: "1lOs2EOqStjiMlDINR44KnMV9De.txt", Filename: "attachment.txt"},
-					{ID: "1lOs60waIw6LoEqWNPmL7LRR06M.png", Filename: "attachment.png"},
-				},
-			},
-		},
-	}
-}
 
 // MessageRepositoryInMemory ...
 type MessageRepositoryInMemory struct {
@@ -72,7 +24,6 @@ func (r *MessageRepositoryInMemory) Save(ctx context.Context, m *domain.Message)
 
 	go func() {
 		r.store.mapMessage[m.ID] = *m
-
 		err <- nil
 		close(err)
 	}()
@@ -89,6 +40,9 @@ func (r *MessageRepositoryInMemory) FindAll(ctx context.Context) <-chan QueryRes
 		for _, item := range r.store.mapMessage {
 			messages = append(messages, item)
 		}
+
+		// sort
+		sort.Sort(ByDateDesc(messages))
 
 		result <- QueryResult{Result: messages}
 		close(result)
