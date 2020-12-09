@@ -32,8 +32,8 @@ func NewMessageInMemoryStore() *MessageInMemoryStore {
 				TextBody: "We’ve almost made it to 2021. Have you built any particularly cool projects this year? We’d love to hear about them.",
 				HTMLBody: "<p>hello world</p>",
 				Attachments: []domain.Attachment{
-					{ID: "1lNigjr8fsntbweehfBLpkQRoMh", Filename: "attachment.txt"},
-					{ID: "1lNip3BucJnkDGo2uAChhgib20T", Filename: "attachment.png"},
+					{ID: "1lNigjr8fsntbweehfBLpkQRoMh", Filename: "attachment.txt", Filepath: "1lNigjr8fsntbweehfBLpkQRoMh.txt"},
+					{ID: "1lNip3BucJnkDGo2uAChhgib20T", Filename: "attachment.png", Filepath: "1lNip3BucJnkDGo2uAChhgib20T.png"},
 				},
 				Date: time.Now().Add(-20 * time.Minute),
 			},
@@ -50,8 +50,8 @@ func NewMessageInMemoryStore() *MessageInMemoryStore {
 				TextBody: "Collaborating with multiple people can be difficult, especially with lots of back and forth across email and chat.",
 				HTMLBody: "<p>hello world</p>",
 				Attachments: []domain.Attachment{
-					{ID: "1lOs2EOqStjiMlDINR44KnMV9De", Filename: "attachment.txt"},
-					{ID: "1lOs60waIw6LoEqWNPmL7LRR06M", Filename: "attachment.png"},
+					{ID: "1lOs2EOqStjiMlDINR44KnMV9De", Filename: "attachment.txt", Filepath: "1lOs2EOqStjiMlDINR44KnMV9D.txt"},
+					{ID: "1lOs60waIw6LoEqWNPmL7LRR06M", Filename: "attachment.png", Filepath: "1lOs60waIw6LoEqWNPmL7LRR06M.png"},
 				},
 				Date: time.Now(),
 			},

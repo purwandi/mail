@@ -107,14 +107,16 @@ func (s *SMTPHandler) mailHandler(origin net.Addr, sender string, to []string, d
 	attch := []domain.Attachment{}
 	for _, item := range m.Attachments {
 		fid := ksuid.New().String()
+		fpath := fmt.Sprintf("./public/assets/%s%s", fid, filepath.Ext(item.FileName))
 		attch = append(attch, domain.Attachment{
 			ID:       fid,
 			Filename: item.FileName,
+			Filepath: fpath,
 			Type:     item.ContentType,
 		})
 
 		// write into file
-		f, err := os.Create(fmt.Sprintf("./public/assets/%s%s", fid, filepath.Ext(item.FileName)))
+		f, err := os.Create(fpath)
 		if err != nil {
 			fmt.Println(err)
 			return

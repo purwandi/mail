@@ -67,10 +67,22 @@ func (s *HTTPHandler) Delete(c echo.Context) error {
 	return c.JSON(http.StatusOK, "")
 }
 
+// Download ...
+func (s *HTTPHandler) Download(c echo.Context) error {
+	f := c.Param("file")
+	if f == "" {
+		return c.JSON(http.StatusNotFound, "")
+	}
+
+	return c.Attachment(fmt.Sprintf("./public/assets/%s", f), f)
+}
+
 // Serve for serve
 func (s *HTTPHandler) Serve() {
+	s.echo.GET("/download/:file", s.Download)
+
 	s.echo.GET("/api/message", s.List)
-	s.echo.GET("/api/message/{id}", s.Detail)
+	s.echo.GET("/api/message/:id", s.Detail)
 	s.echo.DELETE("/api/message", s.Delete)
 
 	go func() {
