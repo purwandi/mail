@@ -11,8 +11,21 @@
 
   <div id="app">
     <div class="h-screen flex">
-      <div class="w-80 border-r h-screen flex">
-        <div class="flex-1 overflow-y-auto border-t border-gray-100">
+      <div class="w-80 border-r h-screen flex flex-col">
+        <div class="flex px-4 py-2 justify-between">
+          <div class="flex-1 pr-2">
+            <input type="text" class="border border-gray-200 px-2 py-1 rounded-sm w-full" placeholder="Search email" />
+          </div>
+          <div class="space-x-2 flex justify-between">
+            <button>
+              <img class="w-5 h-5" src="/images/cached-black-18dp.svg" alt="Refresh" />
+            </button>
+            <button>
+              <img class="w-5 h-5" src="/images/delete_sweep-black-18dp.svg" alt="Delete All" />
+            </button>
+          </div>
+        </div>
+        <div class="flex-1 overflow-y-auto border-t border-gray-200">
           <a href=""
             v-for="m in messages"
             class="px-5 py-3 border-b border-gray-50 block"
@@ -27,10 +40,42 @@
         </div>
       </div>
       <div class="flex-1 mix-w-0 h-screen flex flex-col bg-white">
-        <div class="p-5">
-          <h1 class="text-lg">{{ message.subject }}</h1>
-          <p class="text-xs">From : purwandi</p>
-          <p class="text-xs">To : purwandi@yahoo.com</p>
+        <div class="p-4">
+          <div class="flex mb-2">
+            <h1 class="font-medium flex-1">{{ message.subject }}</h1>
+            <button>
+              <img class="w-5 h-5" src="/images/delete-black-18dp.svg" alt="Delete" />
+            </button>
+          </div>
+          <div class="flex content-start">
+            <div class="flex-1">
+              <p class="text-xs text-gray-600">From :
+                <span v-for="c in message.from">
+                  {{ c.name }}
+                  <span><</span>{{ c.email }}<span>></span>;
+                </span>
+              </p>
+              <p class="text-xs text-gray-600">To :
+                <span v-for="t in message.to">
+                  {{ t.name }}
+                  <span><</span>{{ t.email }}<span>></span>;
+                </span>
+              </p>
+            </div>
+            <div>
+              <p class="text-xs text-gray-600">{{ message.date | formatDate }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="px-4 py-2 border-t border-gray-100 bg-gray-100" v-if="message.attachments.length > 0">
+          <div class="space-x-4 flex flex-row">
+            <span v-for="a in message.attachments" class="border border-gray-100 px-1 rounded-sm flex">
+              <div class="border-r border-gray-100 flex pr-1">
+                <img src="/images/attachment-black-18dp.svg" class="w-4 h-4" alt="">
+              </div>
+              <a :href="`/download/${a.id}`" class="pl-1 text-xs">{{ a.filename }}</a>
+            </span>
+          </div>
         </div>
         <div class="flex-1 overflow-y-auto border-t border-gray-100">
           <iframe class="w-full h-full" :srcdoc="message.html_body"></iframe>
@@ -41,6 +86,20 @@
 
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   <script>
+    Vue.filter("formatDate", function(value) {
+      if (value) {
+        var date = new Date(value)
+        var options = {
+          year: 'numeric', month: 'numeric', day: 'numeric',
+          hour: 'numeric', minute: 'numeric', second: 'numeric',
+          timeZone: 'Asia/Jakarta',
+          timeZoneName: 'short'
+        };
+
+        return Intl.DateTimeFormat('id-ID', options).format(date)
+      }
+    })
+
     new Vue({
       el: "#app",
       data () {
