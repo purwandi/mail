@@ -1,0 +1,6 @@
+attachment.png
+attachment.txt
+.DS_Store
+node_modules
+public/css/app.css
+.env

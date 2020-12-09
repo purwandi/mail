@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inbox</title>
+
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+
+  <div id="app">
+    <div class="h-screen flex">
+      <div class="w-64 bg-gray-100 border-r">
+
+      </div>
+      <div class="flex-1 mix-w-0 bg-white">
+        <div class="panel-heading p-5">
+          <h1 class="text-xl">Hello from tidy</h1>
+          <p>From: Foobar < foo@bar.com > </p>
+          <p>To: Bar < foo@bar.com> </p>
+        </div>
+        <div class="panel-body">
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script>
+    new Vue({
+      el: "#app"
+    })
+  </script>
+</body>
+</html>
