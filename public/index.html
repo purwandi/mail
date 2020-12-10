@@ -17,7 +17,7 @@
             <input type="text" class="border border-gray-200 px-2 py-1 rounded-sm w-full" placeholder="Search email" />
           </div>
           <div class="space-x-2 flex justify-between">
-            <button>
+            <button type="button" @click="fetchMessages">
               <img class="w-5 h-5" src="/images/cached-black-18dp.svg" alt="Refresh" />
             </button>
             <button>
@@ -109,14 +109,17 @@
         }
       },
       mounted() {
-        fetch('/api/message')
-          .then(res => res.json())
-          .then(res => {
-            this.message = res[0]
-            this.messages = res
-          })
+        this.fetchMessages()
       },
       methods: {
+        fetchMessages() {
+          fetch('/api/message')
+            .then(res => res.json())
+            .then(res => {
+              this.message = res[0]
+              this.messages = res
+            })
+        },
         setMessage(e, m) {
           this.message = m
           e.preventDefault()
