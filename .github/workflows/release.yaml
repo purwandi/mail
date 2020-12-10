@@ -16,11 +16,10 @@ jobs:
         registry: docker.pkg.github.com
     - uses: docker/build-push-action@v2
       with:
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
         context: .
         load: true
         registry: docker.pkg.github.com
         repository: purwandi/mail/mailbox
         tag_with_ref: true
-        push: true
+    - run: docker images
+    - run: docker push docker.pkg.github.com/purwandi/mail/mailbox
