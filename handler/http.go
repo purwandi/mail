@@ -51,21 +51,32 @@ func (s *HTTPHandler) List(c echo.Context) error {
 		})
 	}
 
-	// casting into
-	messages := result.Result.([]domain.Message)
-
-	// response
-	return c.JSON(http.StatusOK, messages)
-}
-
-// Detail ...
-func (s *HTTPHandler) Detail(c echo.Context) error {
-	return c.JSON(http.StatusOK, "")
+	// Response
+	return c.JSON(http.StatusOK, result.Result.([]domain.Message))
 }
 
 // Delete ...
 func (s *HTTPHandler) Delete(c echo.Context) error {
-	return c.JSON(http.StatusOK, "")
+	id := c.Param("id")
+	if id == "" {
+		return c.JSON(http.StatusBadRequest, map[string]interface{}{
+			"error": "message id is required",
+		})
+	}
+
+	// Process
+	err := <-s.repository.Delete(c.Request().Context(), id)
+	if err != nil {
+		s.logger.Error("Unable to delete message", zap.Error(err))
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"error": "Unable to delete message",
+		})
+	}
+
+	// Response
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"status": "ok",
+	})
 }
 
 // DeleteAll ...
@@ -87,7 +98,9 @@ func (s *HTTPHandler) DeleteAll(c echo.Context) error {
 func (s *HTTPHandler) Download(c echo.Context) error {
 	f := c.Param("file")
 	if f == "" {
-		return c.JSON(http.StatusNotFound, "")
+		return c.JSON(http.StatusBadRequest, map[string]interface{}{
+			"status": "file params is required",
+		})
 	}
 
 	// Response
@@ -97,10 +110,8 @@ func (s *HTTPHandler) Download(c echo.Context) error {
 // Serve for serve
 func (s *HTTPHandler) Serve() {
 	s.echo.GET("/download/:file", s.Download)
-
 	s.echo.GET("/api/message", s.List)
-	s.echo.GET("/api/message/:id", s.Detail)
-	s.echo.DELETE("/api/message", s.Delete)
+	s.echo.DELETE("/api/message/:id", s.Delete)
 	s.echo.DELETE("/api/reset", s.DeleteAll)
 
 	go func() {

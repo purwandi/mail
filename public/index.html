@@ -13,7 +13,7 @@
       <div class="w-80 border-r h-screen flex flex-col">
         <div class="flex px-4 py-2 justify-between">
           <div class="flex-1 pr-2">
-            <input type="text" class="border border-gray-200 px-2 py-1 rounded-sm w-full" placeholder="Search email" />
+            <input type="text" class="border border-gray-200 px-2 py-1 rounded-sm w-full" placeholder="Search email, not implement yet!" />
           </div>
           <div class="space-x-2 flex justify-between">
             <button type="button" @click="fetchMessages">
@@ -24,32 +24,35 @@
             </button>
           </div>
         </div>
-        <div class="flex-1 overflow-y-auto border-t border-gray-200">
-          <a href=""
-            v-for="m, index in messages"
-            class="px-5 py-3 border-b border-gray-50 block"
-            v-bind:class="{ 'bg-gray-50': m.id == message.id }"
-            @click="setMessage($event, index)">
-            <h2 class="truncate font-medium">{{ m.sender }}</h2>
-            <h3 class="truncate">{{ m.subject }}</h3>
-            <p class="text-gray-400 text-xs truncate-2-lines">
-              {{ m.text_body }}
-            </p>
-          </a>
-        </div>
+        <messages-sidebar :messages="messages" :message="message" :set="setMessage"/>
       </div>
-      <message-component :message="message" />
+      <message-component :message="message" :del="deleteMessage" />
     </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script type="text/html" id="messages-sidebar">
+    <div class="flex-1 overflow-y-auto border-t border-gray-200">
+      <a href=""
+        v-for="m, index in messages"
+        class="px-5 py-3 border-b border-gray-50 block"
+        v-bind:class="{ 'bg-gray-50': m.id == message.id }"
+        @click="set($event, index)">
+        <h2 class="truncate font-medium">{{ m.sender }}</h2>
+        <h3 class="truncate">{{ m.subject }}</h3>
+        <p class="text-gray-400 text-xs truncate-2-lines">
+          {{ m.text_body }}
+        </p>
+      </a>
+    </div>
+  </script>
   <script type="text/html" id="message-template">
     <div class="flex-1 mix-w-0 h-screen">
       <div v-if="message" class="flex flex-col">
         <div class="p-4">
           <div class="flex mb-2">
             <h1 class="font-medium flex-1">{{ message.subject }}</h1>
-            <button>
+            <button type="button" @click="del($event, message)">
               <img class="w-5 h-5" src="/images/delete-black-18dp.svg" alt="Delete" />
             </button>
           </div>
@@ -97,7 +100,12 @@
   <script>
     Vue.component('message-component', {
       template: '#message-template',
-      props: ['message']
+      props: ['message', 'del']
+    })
+
+    Vue.component('messages-sidebar', {
+      template: '#messages-sidebar',
+      props: ['messages', 'message', 'set']
     })
 
     Vue.filter("formatDate", function(value) {
@@ -141,6 +149,16 @@
             .then(res => {
               this.messages = res
             })
+        },
+        deleteMessage(e, m) {
+          var idx = this.messages.findIndex(item => item.id == m.id )
+          fetch(`/api/message/${m.id}`, { method: "DELETE" })
+            .then(res => res.json())
+            .then(res => {
+              this.messages.splice(idx, 1)
+            })
+
+          e.preventDefault()
         },
         resetMessages(e) {
           fetch('/api/reset', { method: "DELETE" })

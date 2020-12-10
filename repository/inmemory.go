@@ -71,13 +71,13 @@ func (r *MessageRepositoryInMemory) Find(ctx context.Context, id string) <-chan 
 }
 
 // Delete ...
-func (r *MessageRepositoryInMemory) Delete(ctx context.Context, message *domain.Message) <-chan error {
+func (r *MessageRepositoryInMemory) Delete(ctx context.Context, id string) <-chan error {
 	err := make(chan error)
 
 	go func() {
 		for _, item := range r.store.mapMessage {
-			if item.ID == message.ID {
-				delete(r.store.mapMessage, message.ID)
+			if item.ID == id {
+				delete(r.store.mapMessage, id)
 				err <- nil
 				break
 			}
