@@ -134,9 +134,8 @@
         message () {
           if (this.messages.length > 0) {
             return this.messages[this.index]
-          } else {
-            return null
           }
+          return null
         }
       },
       mounted() {
@@ -145,7 +144,16 @@
       methods: {
         fetchMessages() {
           fetch('/api/message')
-            .then(res => res.json())
+            .then(res => {
+              if (!res.ok) {
+                if (res.status == 401) {
+                  window.location.href = '/login'
+                  return
+                }
+                throw Error (res.statusText)
+              }
+              return res.json()
+            })
             .then(res => {
               this.messages = res
             })
@@ -153,7 +161,16 @@
         deleteMessage(e, m) {
           var idx = this.messages.findIndex(item => item.id == m.id )
           fetch(`/api/message/${m.id}`, { method: "DELETE" })
-            .then(res => res.json())
+            .then(res => {
+              if (!res.ok) {
+                if (res.status == 401) {
+                  window.location.href = '/login'
+                  return
+                }
+                throw Error (res.statusText)
+              }
+              return res.json()
+            })
             .then(res => {
               this.messages.splice(idx, 1)
             })
@@ -162,7 +179,16 @@
         },
         resetMessages(e) {
           fetch('/api/reset', { method: "DELETE" })
-            .then(res => res.json())
+            .then(res => {
+              if (!res.ok) {
+                if (res.status == 401) {
+                  window.location.href = '/login'
+                  return
+                }
+                throw Error (res.statusText)
+              }
+              return res.json()
+            })
             .then(res => {
               this.messages = []
             })

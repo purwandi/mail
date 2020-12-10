@@ -19,6 +19,7 @@ var (
 	shutdowns []func() error
 	auth      *mail.Auth
 	tls       *mail.TLS
+	secret    string
 	smtpPort  = "2525"
 	httpPort  = "8080"
 	hostname  = "localhost"
@@ -70,8 +71,14 @@ func run() {
 		hostname = os.Getenv("MAIL_HOSTNAME")
 	}
 
+	if os.Getenv("APP_KEY") == "" {
+		logger.Fatal("app key is not set")
+	}
+
+	secret = os.Getenv("APP_KEY")
+
 	smtpd := handler.NewSMTPHandler(smtpPort, hostname, logger, auth, tls, db)
-	httpd := handler.NewHTTPHandler(httpPort, logger, auth, db)
+	httpd := handler.NewHTTPHandler(httpPort, secret, logger, auth, db)
 
 	// app service
 	go func() {

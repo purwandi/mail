@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+  <div id="app" class="flex h-screen items-center justify-center">
+    <form v-on:submit="login" class="flex flex-col w-80" method="POST">
+      <div class="bg-red-100 text-red-500 px-2 py-1 rounded-sm mb-5" v-if="message != ''">
+        {{ message }}
+      </div>
+      <div class="mb-2">
+        <label class="block mb-1" for="username">Username</label>
+        <input type="text" name="username" id="username" autocomplete="off" v-model="username" class="border border-gray w-full px-2 py-1 rounded-sm" />
+      </div>
+      <div class="mb-2">
+        <label class="block mb-1" for="password">Password</label>
+        <input type="password" name="password" id="password" v-model="password" autocomplete="off" class="border border-gray w-full px-2 py-1 rounded-sm"/>
+      </div>
+      <div class="mt-2">
+        <button class="bg-gray-900 text-white py-2 px-8 rounded-sm" type="submit">Login</button>
+      </div>
+    </form>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script>
+    new Vue({
+      el: "#app",
+      data () {
+        return {
+          username: "",
+          password: "",
+          message: ""
+        }
+      },
+      methods: {
+        login (e) {
+          var form = new FormData();
+          form.append('username', this.username);
+          form.append('password', this.password);
+
+          fetch("/login", {
+            method: 'POST',
+            body: form
+          })
+            .then(async (res) => {
+              var response = await res.json()
+              if (!res.ok) {
+                if (response.message) {
+                  throw Error(response.message)
+                } else {
+                  throw Error(response.statusText)
+                }
+              }
+              return response
+            })
+            .then(res => {
+              window.location.href = "/"
+            })
+            .catch(e => {
+              this.message = e
+            })
+
+          e.preventDefault()
+        }
+      }
+    })
+  </script>
+</body>
+</html>
