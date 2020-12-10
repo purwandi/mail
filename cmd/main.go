@@ -49,6 +49,7 @@ func run() {
 		httpPort = os.Getenv("HTTP_PORT")
 	}
 
+	// TODO implement multiple data store sqlite/postgresql
 	db := repository.NewMessageInMemory(repository.NewMessageInMemoryStore())
 
 	if os.Getenv("MAIL_AUTH") == "true" {
