@@ -5,8 +5,6 @@ import (
 	"context"
 	"fmt"
 	"net"
-	"os"
-	"path/filepath"
 	"time"
 
 	"github.com/jhillyerd/enmime"
@@ -108,23 +106,12 @@ func (s *SMTPHandler) mailHandler(origin net.Addr, sender string, to []string, d
 
 	attch := []domain.Attachment{}
 	for _, item := range m.Attachments {
-		fid := ksuid.New().String()
-		attch = append(attch, domain.Attachment{
-			ID:       fid,
-			Filename: item.FileName,
-			Filepath: fmt.Sprintf("%s%s", fid, filepath.Ext(item.FileName)),
-			Type:     item.ContentType,
-		})
-
-		// write into file
-		f, err := os.Create(fmt.Sprintf("./public/assets/%s%s", fid, filepath.Ext(item.FileName)))
+		attach, err := domain.CreateAttachment(item.FileName, item.ContentType, item.Content)
 		if err != nil {
-			fmt.Println(err)
-			return
+			s.logger.Error("Unable to create attachment", zap.Error(err))
+			continue
 		}
-
-		f.Write(item.Content)
-		f.Close()
+		attch = append(attch, attach)
 	}
 
 	message := domain.Message{

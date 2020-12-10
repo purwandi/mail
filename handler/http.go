@@ -104,7 +104,7 @@ func (s *HTTPHandler) Download(c echo.Context) error {
 	}
 
 	// Response
-	return c.Attachment(fmt.Sprintf("./public/assets/%s", f), f)
+	return c.Attachment(fmt.Sprintf("%s/%s", mail.AssetFilePath, f), f)
 }
 
 // Serve for serve
