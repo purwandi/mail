@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Inbox</title>
-
   <link rel="stylesheet" href="/css/app.css">
 </head>
 <body>
@@ -20,17 +19,17 @@
             <button type="button" @click="fetchMessages">
               <img class="w-5 h-5" src="/images/cached-black-18dp.svg" alt="Refresh" />
             </button>
-            <button>
+            <button type="button" @click="resetMessages">
               <img class="w-5 h-5" src="/images/delete_sweep-black-18dp.svg" alt="Delete All" />
             </button>
           </div>
         </div>
         <div class="flex-1 overflow-y-auto border-t border-gray-200">
           <a href=""
-            v-for="m in messages"
+            v-for="m, index in messages"
             class="px-5 py-3 border-b border-gray-50 block"
             v-bind:class="{ 'bg-gray-50': m.id == message.id }"
-            @click="setMessage($event, m)">
+            @click="setMessage($event, index)">
             <h2 class="truncate font-medium">{{ m.sender }}</h2>
             <h3 class="truncate">{{ m.subject }}</h3>
             <p class="text-gray-400 text-xs truncate-2-lines">
@@ -39,7 +38,14 @@
           </a>
         </div>
       </div>
-      <div class="flex-1 mix-w-0 h-screen flex flex-col bg-white">
+      <message-component :message="message" />
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script type="text/html" id="message-template">
+    <div class="flex-1 mix-w-0 h-screen">
+      <div v-if="message" class="flex flex-col">
         <div class="p-4">
           <div class="flex mb-2">
             <h1 class="font-medium flex-1">{{ message.subject }}</h1>
@@ -81,11 +87,19 @@
           <iframe class="w-full h-full" :srcdoc="message.html_body"></iframe>
         </div>
       </div>
+      <div v-else class="flex flex-col justify-center items-center h-screen">
+        <img src="/images/inbox-black-18dp.svg" class="w-14"/>
+        <h1 class="text-lg">Empty inbox</h1>
+        <p>There is no message in inbox</p>
+      </div>
     </div>
-  </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  </script>
   <script>
+    Vue.component('message-component', {
+      template: '#message-template',
+      props: ['message']
+    })
+
     Vue.filter("formatDate", function(value) {
       if (value) {
         var date = new Date(value)
@@ -104,8 +118,17 @@
       el: "#app",
       data () {
         return {
+          index: 0,
           messages: [],
-          message: {},
+        }
+      },
+      computed: {
+        message () {
+          if (this.messages.length > 0) {
+            return this.messages[this.index]
+          } else {
+            return null
+          }
         }
       },
       mounted() {
@@ -116,12 +139,20 @@
           fetch('/api/message')
             .then(res => res.json())
             .then(res => {
-              this.message = res[0]
               this.messages = res
             })
         },
-        setMessage(e, m) {
-          this.message = m
+        resetMessages(e) {
+          fetch('/api/reset', { method: "DELETE" })
+            .then(res => res.json())
+            .then(res => {
+              this.messages = []
+            })
+
+          e.preventDefault()
+        },
+        setMessage(e, index) {
+          this.index = index
           e.preventDefault()
         }
       }

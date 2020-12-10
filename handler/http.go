@@ -68,6 +68,21 @@ func (s *HTTPHandler) Delete(c echo.Context) error {
 	return c.JSON(http.StatusOK, "")
 }
 
+// DeleteAll ...
+func (s *HTTPHandler) DeleteAll(c echo.Context) error {
+	// Process
+	err := <-s.repository.Reset(c.Request().Context())
+	if err != nil {
+		s.logger.Error("Unable to clear all messages", zap.Error(err))
+		return c.JSON(http.StatusInternalServerError, map[string]string{
+			"error": "Unable to clear all messages",
+		})
+	}
+
+	// Response
+	return c.JSON(http.StatusOK, "")
+}
+
 // Download ...
 func (s *HTTPHandler) Download(c echo.Context) error {
 	f := c.Param("file")
@@ -75,6 +90,7 @@ func (s *HTTPHandler) Download(c echo.Context) error {
 		return c.JSON(http.StatusNotFound, "")
 	}
 
+	// Response
 	return c.Attachment(fmt.Sprintf("./public/assets/%s", f), f)
 }
 
@@ -85,6 +101,7 @@ func (s *HTTPHandler) Serve() {
 	s.echo.GET("/api/message", s.List)
 	s.echo.GET("/api/message/:id", s.Detail)
 	s.echo.DELETE("/api/message", s.Delete)
+	s.echo.DELETE("/api/reset", s.DeleteAll)
 
 	go func() {
 		if err := s.echo.Start(fmt.Sprintf(":%s", s.port)); err != nil {

@@ -89,3 +89,16 @@ func (r *MessageRepositoryInMemory) Delete(ctx context.Context, message *domain.
 
 	return err
 }
+
+// Reset ...
+func (r *MessageRepositoryInMemory) Reset(ctx context.Context) <-chan error {
+	err := make(chan error)
+
+	go func() {
+		r.store.mapMessage = map[string]domain.Message{}
+		err <- nil
+		close(err)
+	}()
+
+	return err
+}
