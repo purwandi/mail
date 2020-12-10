@@ -20,6 +20,7 @@ import (
 
 // SMTPHandler ...
 type SMTPHandler struct {
+	port       string
 	logger     *zap.Logger
 	smtpd      *smtpd.Server
 	repository repository.MessageRepository
@@ -36,6 +37,7 @@ func NewSMTPHandler(port string, logger *zap.Logger, auth *mail.Auth, tls *mail.
 	}
 
 	return &SMTPHandler{
+		port:       port,
 		logger:     logger,
 		smtpd:      smtp,
 		auth:       auth,
@@ -70,7 +72,7 @@ func (s *SMTPHandler) Serve() {
 		}
 	}()
 
-	s.logger.Info("smtp service is running")
+	s.logger.Info(fmt.Sprintf("smtp service is running at %s", s.port))
 }
 
 // Close for close operation

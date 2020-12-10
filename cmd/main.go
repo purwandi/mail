@@ -17,6 +17,8 @@ import (
 
 var (
 	shutdowns []func() error
+	smtpPort  = "2525"
+	httpPort  = "8080"
 	ctx       = context.Background()
 	logger, _ = zap.NewProduction(
 		zap.AddStacktrace(zapcore.FatalLevel),
@@ -35,19 +37,32 @@ func main() {
 func run() {
 	var shutdown = make(chan struct{})
 
+	if os.Getenv("SMTP_PORT") != "" {
+		smtpPort = os.Getenv("SMTP_PORT")
+	}
+
+	if os.Getenv("HTTP_PORT") != "" {
+		httpPort = os.Getenv("HTTP_PORT")
+	}
+
 	db := repository.NewMessageInMemory(repository.NewMessageInMemoryStore())
+
+	// TODO get username and password from env
 	auth := &mail.Auth{
 		Enable:   true,
 		Username: "username",
 		Password: "password",
 	}
+
+	// TODO get certfile and keyfile from env
 	tls := &mail.TLS{
 		Enable:   true,
 		CertFile: "./cert/certificate.crt",
 		KeyFile:  "./cert/certificate.key",
 	}
-	smtpd := handler.NewSMTPHandler("2525", logger, auth, tls, db)
-	httpd := handler.NewHTTPHandler("8080", logger, auth, db)
+
+	smtpd := handler.NewSMTPHandler(smtpPort, logger, auth, tls, db)
+	httpd := handler.NewHTTPHandler(httpPort, logger, auth, db)
 
 	// app service
 	go func() {
@@ -67,6 +82,7 @@ func run() {
 		close(shutdown)
 	}()
 
+	// start the engine
 	smtpd.Serve()
 	httpd.Serve()
 	<-shutdown

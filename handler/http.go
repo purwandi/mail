@@ -27,6 +27,7 @@ func NewHTTPHandler(port string, logger *zap.Logger, auth *mail.Auth, repo repos
 	e := echo.New()
 
 	e.HideBanner = true
+	e.HidePort = true
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 	e.Static("/", "public")
@@ -91,7 +92,7 @@ func (s *HTTPHandler) Serve() {
 		}
 	}()
 
-	s.logger.Info("http service is running")
+	s.logger.Info(fmt.Sprintf("http service is running at %s", s.port))
 }
 
 // Close ...
