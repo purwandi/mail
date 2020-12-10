@@ -19,6 +19,7 @@ import (
 // SMTPHandler ...
 type SMTPHandler struct {
 	port       string
+	hostname   string
 	logger     *zap.Logger
 	smtpd      *smtpd.Server
 	repository repository.MessageRepository
@@ -27,11 +28,11 @@ type SMTPHandler struct {
 }
 
 // NewSMTPHandler for creating new smtp
-func NewSMTPHandler(port string, logger *zap.Logger, auth *mail.Auth, tls *mail.TLS, repo repository.MessageRepository) *SMTPHandler {
+func NewSMTPHandler(port, hostname string, logger *zap.Logger, auth *mail.Auth, tls *mail.TLS, repo repository.MessageRepository) *SMTPHandler {
 	smtp := &smtpd.Server{
 		Addr:     fmt.Sprintf(":%s", port),
 		Appname:  "Mailbox",
-		Hostname: "onelabs.dev",
+		Hostname: hostname,
 	}
 
 	return &SMTPHandler{

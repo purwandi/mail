@@ -21,6 +21,7 @@ var (
 	tls       *mail.TLS
 	smtpPort  = "2525"
 	httpPort  = "8080"
+	hostname  = "localhost"
 	ctx       = context.Background()
 	logger, _ = zap.NewProduction(
 		zap.AddStacktrace(zapcore.FatalLevel),
@@ -65,7 +66,11 @@ func run() {
 		}
 	}
 
-	smtpd := handler.NewSMTPHandler(smtpPort, logger, auth, tls, db)
+	if os.Getenv("MAIL_HOSTNAME") != "" {
+		hostname = os.Getenv("MAIL_HOSTNAME")
+	}
+
+	smtpd := handler.NewSMTPHandler(smtpPort, hostname, logger, auth, tls, db)
 	httpd := handler.NewHTTPHandler(httpPort, logger, auth, db)
 
 	// app service
