@@ -49,9 +49,20 @@
   <script type="text/html" id="message-template">
     <div class="flex-1 mix-w-0">
       <div v-if="message" class="flex flex-col h-screen">
+        <div class="border-b-4 border-gray-200 flex justify-between px-4 py-1 ">
+          <div>
+            <h1 class="font-bold">Mailbox</h1>
+          </div>
+          <div class="flex space-x-4">
+            <a href="https://github.com/purwandi/mail/issues" target="_blank" class="flex">
+              <img src="/images/github.svg" class="w-4" />
+            </a>
+            <a href="/logout" class="text-red-500">Logout</a>
+          </div>
+        </div>
         <div class="p-4">
           <div class="flex mb-2">
-            <h1 class="font-medium flex-1">{{ message.subject }}</h1>
+            <h2 class="font-medium flex-1">{{ message.subject }}</h2>
             <button type="button" @click="del($event, message)">
               <img class="w-5 h-5" src="/images/delete-black-18dp.svg" alt="Delete" />
             </button>

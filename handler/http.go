@@ -175,9 +175,23 @@ func (s *HTTPHandler) LoginProcess(c echo.Context) error {
 	})
 }
 
+// Logout ...
+func (s *HTTPHandler) Logout(c echo.Context) error {
+	sess, err := session.Get(sessionName, c)
+	if err != nil {
+		return c.Redirect(http.StatusTemporaryRedirect, "/")
+	}
+
+	delete(sess.Values, "authorize")
+	sess.Save(c.Request(), c.Response())
+
+	return c.Redirect(http.StatusTemporaryRedirect, "/login")
+}
+
 // Serve for serve
 func (s *HTTPHandler) Serve() {
 	s.echo.GET("/login", s.Login)
+	s.echo.GET("/logout", s.Logout)
 	s.echo.POST("/login", s.LoginProcess)
 
 	s.echo.GET("/download/:file", s.Download, s.authorization.Check)
