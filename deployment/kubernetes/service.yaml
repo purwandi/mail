@@ -1,0 +1,21 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: mailbox
+  labels:
+    app: mailbox
+    version: "1.0.1"
+spec:
+  ports:
+    - name: http-8080
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+    - name: tcp-2525
+      protocol: TCP
+      port: 2525
+      targetPort: 2525
+  selector:
+    app: mailbox
+    version: "1.0.1"
+  type: ClusterIP

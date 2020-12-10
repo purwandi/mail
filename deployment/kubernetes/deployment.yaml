@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: mailbox
+    version: "1.0.1"
+  name: mailbox
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mailbox
+      version: "1.0.1"
+  template:
+    metadata:
+      labels:
+        app: mailbox
+        version: "1.0.1"
+    spec:
+      containers:
+      - image: docker.pkg.github.com/purwandi/mail/mailbox:1.0.1
+        name: mailbox
+        imagePullPolicy: Always
+        env:
+          - name: APP_KEY
+            value: ""
+          - name: HTTP_PORT
+            value: "8080"
+          - name: SMTP_PORT
+            value: "2525"
+          - name: MAIL_HOSTNAME
+            value: mailbox
+          - name: MAIL_AUTH
+            value: "true"
+          - name: MAIL_USERNAME
+            value: foo@bar.com
+          - name: MAIL_PASSWORD
+            value: password
+          - name: MAIL_TLS
+            value: "true"
+          - name: MAIL_TLS_CERT
+            value: /workspace/cert/tls.crt
+          - name: MAIL_TLS_KEY
+            value: /workspace/cert/tls.key
+        ports:
+          - containerPort: 8080
+            name: http
+            protocol: TCP
+          - containerPort: 2525
+            name: smtp
+            protocol: TCP
+        resources:
+          requests:
+            cpu: 30m
+            memory: 64Mi
+          limits:
+            cpu: 100m
+            memory: 128Mi
+        volumeMounts:
+          - mountPath: "/workspace/cert"
+            name: smtp-ssl
+            readOnly: true
+      volumes:
+        - name: smtp-ssl
+          secret:
+            secretName: smtp-ssl
+            # secretName: {namespace}/smtp-ssl
+      restartPolicy: Always

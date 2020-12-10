@@ -22,6 +22,11 @@ Mailbox is an email testing tool for developers:
 The easiest way to run mailbox is using docker, please check the latest version of 
 available docker image version [github docker registry](https://github.com/purwandi/mail/packages/533898). 
 
+Please take a look at deployment folder:
+
+- For [docker-compose](./deployment/docker-compose)
+- For [kubernetes](./deployment/kubernetes)
+
 ### Minimal Configuration
 
 ## TLS
