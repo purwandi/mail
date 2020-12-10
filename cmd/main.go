@@ -17,6 +17,8 @@ import (
 
 var (
 	shutdowns []func() error
+	auth      *mail.Auth
+	tls       *mail.TLS
 	smtpPort  = "2525"
 	httpPort  = "8080"
 	ctx       = context.Background()
@@ -47,18 +49,20 @@ func run() {
 
 	db := repository.NewMessageInMemory(repository.NewMessageInMemoryStore())
 
-	// TODO get username and password from env
-	auth := &mail.Auth{
-		Enable:   true,
-		Username: "username",
-		Password: "password",
+	if os.Getenv("MAIL_AUTH") == "true" {
+		auth = &mail.Auth{
+			Enable:   true,
+			Username: os.Getenv("MAIL_USERNAME"),
+			Password: os.Getenv("MAIL_PASSWORD"),
+		}
 	}
 
-	// TODO get certfile and keyfile from env
-	tls := &mail.TLS{
-		Enable:   true,
-		CertFile: "./cert/certificate.crt",
-		KeyFile:  "./cert/certificate.key",
+	if os.Getenv("MAIL_TLS") == "true" {
+		tls = &mail.TLS{
+			Enable:   true,
+			CertFile: os.Getenv("MAIL_TLS_CERT"),
+			KeyFile:  os.Getenv("MAIL_TLS_KEY"),
+		}
 	}
 
 	smtpd := handler.NewSMTPHandler(smtpPort, logger, auth, tls, db)

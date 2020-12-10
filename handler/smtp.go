@@ -48,7 +48,7 @@ func NewSMTPHandler(port string, logger *zap.Logger, auth *mail.Auth, tls *mail.
 func (s *SMTPHandler) Serve() {
 	s.smtpd.Handler = s.mailHandler
 
-	if s.auth != nil {
+	if s.auth != nil && s.auth.Enable == true {
 		s.smtpd.AuthRequired = s.auth.Enable
 		s.smtpd.AuthHandler = s.authHandler
 		s.smtpd.AuthMechs = map[string]bool{
