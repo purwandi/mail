@@ -28,13 +28,15 @@ func CreateAttachment(filename, contentType string, content []byte) (Attachment,
 	}
 
 	// write into file
-	f, err := os.Create(fmt.Sprintf("%s/%s%s", mail.AssetFilePath, fid, filepath.Ext(filename)))
-	defer f.Close()
+	f, err := os.Create(fmt.Sprintf("%s/%s", mail.AssetFilePath, attch.Filepath))
 	if err != nil {
 		return Attachment{}, err
 	}
-
-	f.Write(content)
+	defer f.Close()
+	_, err = f.Write(content)
+	if err != nil {
+		return Attachment{}, err
+	}
 
 	return attch, nil
 }

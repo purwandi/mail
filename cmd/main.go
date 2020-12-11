@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/signal"
 	"runtime"
+	"strconv"
 	"syscall"
 
 	"github.com/joho/godotenv"
@@ -16,6 +17,7 @@ import (
 )
 
 var (
+	cacheSize = 10000
 	shutdowns []func() error
 	auth      *mail.Auth
 	tls       *mail.TLS
@@ -49,8 +51,18 @@ func run() {
 		httpPort = os.Getenv("HTTP_PORT")
 	}
 
+	if cs := os.Getenv("LRU_CACHE_SIZE"); cs != "" {
+		i, err := strconv.Atoi(cs)
+		if err == nil {
+			cacheSize = i
+		}
+	}
+
 	// TODO implement multiple data store sqlite/postgresql
-	db := repository.NewMessageInMemory(repository.NewMessageInMemoryStore())
+	db, err := repository.NewLRUCacheStore(cacheSize, logger)
+	if err != nil {
+		panic(err)
+	}
 
 	if os.Getenv("MAIL_AUTH") == "true" {
 		auth = &mail.Auth{
