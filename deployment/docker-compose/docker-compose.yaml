@@ -2,7 +2,7 @@ version: '3'
 
 services:
   smtp:
-    image: docker.pkg.github.com/purwandi/mail/mailbox:1.0.1
+    image: purwandi/mailbox:1.0.2
     container_name: mailbox
     restart: unless-stopped
     environment:
