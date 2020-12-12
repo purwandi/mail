@@ -5,6 +5,7 @@ go 1.14
 require (
 	github.com/emersion/go-smtp v0.14.0
 	github.com/gorilla/sessions v1.2.1
+	github.com/hashicorp/golang-lru v0.5.4
 	github.com/jhillyerd/enmime v0.8.3
 	github.com/joho/godotenv v1.3.0
 	github.com/labstack/echo-contrib v0.9.0
