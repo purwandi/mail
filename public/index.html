@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Inbox</title>
+  <title>Mailbox</title>
   <link rel="stylesheet" href="/css/app.css">
 </head>
 <body>
@@ -26,7 +26,7 @@
         </div>
         <messages-sidebar :messages="messages" :message="message" :set="setMessage"/>
       </div>
-      <message-component :message="message" :del="deleteMessage" />
+      <message-component :message="message" :del="deleteMessage" :changedisplay="changeDisplay" :display="display" />
     </div>
   </div>
 
@@ -60,7 +60,7 @@
             <a href="/logout" class="text-red-500">Logout</a>
           </div>
         </div>
-        <div class="p-4">
+        <div class="px-4 py-2">
           <div class="flex mb-2">
             <h2 class="font-medium flex-1">{{ message.subject }}</h2>
             <button type="button" @click="del($event, message)">
@@ -97,8 +97,13 @@
             </span>
           </div>
         </div>
+        <div class="px-4 flex">
+          <a href="#" @click="changedisplay($event, 'html')" class="px-6 py-2" v-bind:class="{'border-b-2 border-yellow-500': display == 'html'}">Html</a>
+          <a href="#" @click="changedisplay($event, 'text')" class="px-6 py-2" v-bind:class="{'border-b-2 border-yellow-500': display == 'text'}">Text</a>
+        </div>
         <div class="flex-1 overflow-y-auto border-t border-gray-100">
-          <iframe class="w-full h-full" :srcdoc="message.html_body"></iframe>
+          <iframe v-if="display == 'html'" class="w-full h-full" :srcdoc="message.html_body"></iframe>
+          <div v-else class="w-full h-full p-4" v-html="message.text_body"></div>
         </div>
       </div>
       <div v-else class="flex flex-col justify-center items-center h-screen">
@@ -111,7 +116,7 @@
   <script>
     Vue.component('message-component', {
       template: '#message-template',
-      props: ['message', 'del']
+      props: ['message', 'del', 'changedisplay', 'display']
     })
 
     Vue.component('messages-sidebar', {
@@ -137,6 +142,7 @@
       el: "#app",
       data () {
         return {
+          display: 'html',
           index: 0,
           messages: [],
         }
@@ -208,6 +214,11 @@
         },
         setMessage(e, index) {
           this.index = index
+          e.preventDefault()
+        },
+        changeDisplay(e, val) {
+          console.log(val)
+          this.display = val
           e.preventDefault()
         }
       }

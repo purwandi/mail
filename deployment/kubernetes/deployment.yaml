@@ -3,22 +3,22 @@ kind: Deployment
 metadata:
   labels:
     app: mailbox
-    version: "1.0.1"
+    version: "1.0.3"
   name: mailbox
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: mailbox
-      version: "1.0.1"
+      version: "1.0.3"
   template:
     metadata:
       labels:
         app: mailbox
-        version: "1.0.1"
+        version: "1.0.3"
     spec:
       containers:
-      - image: purwandi/mailbox:1.0.2
+      - image: purwandi/mailbox:1.0.3
         name: mailbox
         imagePullPolicy: Always
         env:

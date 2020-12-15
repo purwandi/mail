@@ -2,7 +2,7 @@ version: '3'
 
 services:
   smtp:
-    image: purwandi/mailbox:1.0.2
+    image: purwandi/mailbox:1.0.3
     container_name: mailbox
     restart: unless-stopped
     environment:
